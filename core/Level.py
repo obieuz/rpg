@@ -15,7 +15,7 @@ class Level:
         self.setup()
 
     def setup(self):
-        self.player = Warrior((640,320),self.all_sprites)
+        self.player = Warrior((640,320),self.all_sprites,self.enemy_sprites)
 
         Enemy(1,(800,320),self.enemy_sprites)
 

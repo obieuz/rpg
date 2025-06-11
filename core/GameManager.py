@@ -6,7 +6,7 @@ from Level import Level
 import sys
 
 
-class GameManager():
+class GameManager:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("RPG")
