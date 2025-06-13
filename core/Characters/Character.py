@@ -2,6 +2,8 @@ import pygame.sprite
 
 from core.Inventory import Inventory
 from core.Timer import Timer
+from ..Overlay import Overlay
+from ..Shop import Shop
 from ..settings import HITTING_TIMER_MS
 
 
@@ -11,7 +13,7 @@ class Character(pygame.sprite.Sprite):
 
         self.enemy_sprites = enemy_sprites
         self.image = pygame.Surface((32, 64))
-        self.gold = 0
+        self.gold = 200
 
         self.image.fill(_color)
         self.rect = self.image.get_rect(center=pos)
@@ -22,6 +24,8 @@ class Character(pygame.sprite.Sprite):
         self.speed = _speed
 
         self.inventory = Inventory()
+        self.shop = Shop()
+        self.overlay = Overlay()
 
         self.hitting_range = 100
 
@@ -29,10 +33,10 @@ class Character(pygame.sprite.Sprite):
         self.mana = _mana
         self.strength = _strength
         self.health = _health
+        self.shop_key_pressed = False
 
     def input(self):
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_UP]:
             self.direction.y = -1
         elif keys[pygame.K_DOWN]:
@@ -47,8 +51,20 @@ class Character(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
+        if keys[pygame.K_s]:
+            if not self.shop_key_pressed:
+                self.shop.toggle_is_visible()
+                self.shop_key_pressed = True
+        else:
+            self.shop_key_pressed = False
+
+        if keys[pygame.K_k]:
+            self.change_current_item(-1)
+
+        if keys[pygame.K_l]:
+            self.change_current_item(1)
+
         if keys[pygame.K_h]:
-            #dodac timer
             self.hit()
 
     def update(self, dt):
@@ -58,6 +74,9 @@ class Character(pygame.sprite.Sprite):
     def move(self, dt):
         self.pos += self.direction * self.speed * dt
         self.rect.center = self.pos
+
+    def add_to_inventory(self,item):
+        self.inventory.add_item(item)
 
     def hit(self):
         print("chcesz kogos bic")
@@ -70,14 +89,15 @@ class Character(pygame.sprite.Sprite):
 
 
     def dealt_damage(self, damage):
-        print(f"Player dostał {damage}")
         pass
 
     def is_enemy_in_hitting_range(self,enemy):
         #jak bedzie jakis item to brac range jego a nie postaci
 
         distance = self.pos.distance_to(enemy.pos)
-        print(distance)
         return distance <= self.hitting_range
+
+    def change_current_item(self,value):
+        self.inventory.change_active_item(value)
 
 
