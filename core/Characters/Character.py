@@ -26,6 +26,7 @@ class Character(pygame.sprite.Sprite):
         self.inventory = Inventory()
         self.shop = Shop()
         self.overlay = Overlay()
+        self.timers = {"hit" : Timer(200,self.hit)}
 
         self.hitting_range = 100
 
@@ -36,40 +37,44 @@ class Character(pygame.sprite.Sprite):
         self.shop_key_pressed = False
 
     def input(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.direction.y = -1
-        elif keys[pygame.K_DOWN]:
-            self.direction.y = 1
-        else:
-            self.direction.y = 0
+        if not self.timers["hit"].active:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP]:
+                self.direction.y = -1
+            elif keys[pygame.K_DOWN]:
+                self.direction.y = 1
+            else:
+                self.direction.y = 0
 
-        if keys[pygame.K_LEFT]:
-            self.direction.x = -1
-        elif keys[pygame.K_RIGHT]:
-            self.direction.x = 1
-        else:
-            self.direction.x = 0
+            if keys[pygame.K_LEFT]:
+                self.direction.x = -1
+            elif keys[pygame.K_RIGHT]:
+                self.direction.x = 1
+            else:
+                self.direction.x = 0
 
-        if keys[pygame.K_s]:
-            if not self.shop_key_pressed:
-                self.shop.toggle_is_visible()
-                self.shop_key_pressed = True
-        else:
-            self.shop_key_pressed = False
+            if keys[pygame.K_s]:
+                if not self.shop_key_pressed:
+                    self.shop.toggle_is_visible()
+                    self.shop_key_pressed = True
+            else:
+                self.shop_key_pressed = False
 
-        if keys[pygame.K_k]:
-            self.change_current_item(-1)
+            if keys[pygame.K_k]:
+                self.change_current_item(-1)
 
-        if keys[pygame.K_l]:
-            self.change_current_item(1)
+            if keys[pygame.K_l]:
+                self.change_current_item(1)
 
-        if keys[pygame.K_h]:
-            self.hit()
+            if keys[pygame.K_h]:
+                self.timers["hit"].activate()
+                self.direction = pygame.math.Vector2()
 
     def update(self, dt):
         self.input()
         self.move(dt)
+        for timer in self.timers.values():
+            timer.update()
 
     def move(self, dt):
         self.pos += self.direction * self.speed * dt

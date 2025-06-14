@@ -31,6 +31,15 @@ class Shop:
             _price=100,
             _icon="gui/miecz.png"
         ))
+        self.items.append(Item(
+            id=uuid4(),
+            _type="sword",
+            _abilities={
+                "strength": 40,
+            },
+            _price=100,
+            _icon="gui/miecz.png"
+        ))
 
     def buy(self,uuid,player):
         item = next((x for x in self.items if x.id == uuid), None)
@@ -48,8 +57,8 @@ class Shop:
         if not self.is_visible:
             return False
         screen.blit(self.surface,(100,100))
-        for item in self.items:
-            item.draw_shop_item(screen)
+        for index,item in enumerate(self.items):
+            item.draw_shop_item(screen,(200+(item.icon.get_width()+20)*index,200))
 
     def handle_click(self, mouse_pos):
         if not self.is_visible:

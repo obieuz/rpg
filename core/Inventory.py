@@ -38,6 +38,8 @@ class Inventory:
             self.active_item_index = 0
         elif self.active_item_index < 0:
             self.active_item_index = len(self.items)-1
+        if len(self.items) == 0:
+            return False
 
         self.active_item = self.items[self.active_item_index]
 
